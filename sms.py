@@ -2,11 +2,6 @@ import streamlit as st
 from twilio.rest import Client
 import os
 
-# Optional: Load from environment variables (recommended)
-# ACCOUNT_SID = os.getenv("TWILIO_SID")
-# AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-
-# For now: hardcode for testing (⚠️ Don’t do this in production!)
 ACCOUNT_SID = "account"
 AUTH_TOKEN = "token"
 TWILIO_PHONE = "+1*********"
