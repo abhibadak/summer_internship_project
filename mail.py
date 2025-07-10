@@ -1,7 +1,7 @@
 import smtplib
 import streamlit as st
 
-From = "badakabhishek170@gmail.com"
+From = "bshek1@gmail.com"
 Sub = st.text_input("Enter subject:")
 To = st.text_input("Enter receiver's email:")
 msg =  st.text_input("Enter message:")
