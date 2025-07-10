@@ -4,7 +4,7 @@ import os
 
 ACCOUNT_SID = "account"
 AUTH_TOKEN = "token"
-TWILIO_PHONE = "+1*********"
+TWILIO_PHONE = "*********"
 
 # Streamlit UI
 st.set_page_config(page_title="Twilio SMS Sender", page_icon="📱")

@@ -4,9 +4,9 @@ import os
 import requests
 
 # --- Twilio Credentials (Replace with your own or load securely) ---
-ACCOUNT_SID = "ACb3e5f3dc7f2de4a91ead8b0c0974b565"
-AUTH_TOKEN = "ee586b707d104595d9bcbc62a67aca89"
-TWILIO_PHONE = "+15074185310"  # Your Twilio number
+ACCOUNT_SID = "account"
+AUTH_TOKEN = "xxyyxx"
+TWILIO_PHONE = "+yyyyyy"  # Your Twilio number
 
 # --- Streamlit UI ---
 st.set_page_config(page_title="📞 Twilio Call Sender", page_icon="📱", layout="centered")
@@ -27,11 +27,6 @@ if st.button("📞 Call Now"):
 <Response>
   <Say voice="alice">{voice_message}</Say>
 </Response>"""
-
-        # Host TwiML temporarily using httpbin or use your own server
-        # For testing: use Pastebin, Replit, GitHub raw, or static site
-        # For now, simulate using a known Twilio demo TwiML
-        # Use this only if you don't have your own URL:
         fallback_twiml_url = "http://demo.twilio.com/docs/voice.xml"
 
         try:
@@ -40,8 +35,7 @@ if st.button("📞 Call Now"):
             call = client.calls.create(
                 to=to_number,
                 from_=TWILIO_PHONE,
-                url=fallback_twiml_url  # Replace with your hosted TwiML XML URL for custom messages
-            )
+                url=fallback_twiml_url  
 
             st.success(f"✅ Call initiated! Call SID: {call.sid}")
         except Exception as e:
