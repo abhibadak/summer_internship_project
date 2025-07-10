@@ -12,7 +12,11 @@ if st.button("Send Email"):
 
   with smtplib.SMTP("smtp.gmail.com",587) as server:
     server.starttls()
+<<<<<<< HEAD
     server.login(From,password="vpzp wegb  fodp")
+=======
+    server.login(From,password="vpzp wegb fodp")
+>>>>>>> dcc1c39e8ba34996d74f36d3dc2314b25987ed28
     server.sendmail(from_addr=From,to_addrs=To, msg=text)
 
     print("Email sent successfully")
