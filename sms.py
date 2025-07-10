@@ -7,9 +7,9 @@ import os
 # AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 
 # For now: hardcode for testing (⚠️ Don’t do this in production!)
-ACCOUNT_SID = "ACb3e5f3dc7f2de4a91ead8b0c0974b565"
-AUTH_TOKEN = "ee586b707d104595d9bcbc62a67aca89"
-TWILIO_PHONE = "+15074185310"
+ACCOUNT_SID = "account"
+AUTH_TOKEN = "token"
+TWILIO_PHONE = "+1*********"
 
 # Streamlit UI
 st.set_page_config(page_title="Twilio SMS Sender", page_icon="📱")
