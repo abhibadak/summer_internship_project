@@ -1,0 +1,19 @@
+RUN
+
+#  Ubuntu + systemd in Docker
+
+Runs **systemd** inside a Docker container so you can use `systemctl` for
+service testing or lab work.
+
+## Build
+
+```bash
+docker build -t ubuntu-systemd .
+
+
+verify
+
+
+docker exec -it sysd bash
+ps -p 1      # should show `systemd`
+systemctl status
