@@ -1,0 +1,8 @@
+nano send_twilio.sh
+
+flask_app/
+├── app.py              # Python web app code
+├── Dockerfile          # Instructions for building Docker image
+├── requirements.txt    # Lists Flask as dependency
+└── .gitignore          # Prevents uploading unwanted files
+
