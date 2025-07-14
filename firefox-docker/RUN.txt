@@ -1,0 +1,9 @@
+# Authorize the container to use your X server
+xhost +si:localuser:${USER}
+
+docker run --rm \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v $HOME/.Xauthority:/home/dockeruser/.Xauthority \
+  --device /dev/dri \
+  firefox-debian
