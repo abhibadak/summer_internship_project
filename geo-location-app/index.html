@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Location Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #map { height: 400px; width: 100%; margin-top: 10px; border: 1px solid #ddd; }
+    #info { padding: 15px; background: #f5f5f5; margin-top: 10px; border-radius: 5px; }
+    button { padding: 10px 15px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+    button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+  <h1>Live Location Tracker</h1>
+  <button id="locate">Get My Location</button>
+  <div id="info">Location data will appear here.</div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([0, 0], 2); // Default world view
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let marker = null;
+    let circle = null;
+
+    document.getElementById('locate').addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        document.getElementById('info').innerHTML = "Geolocation is not supported by your browser.";
+        return;
+      }
+
+      document.getElementById('info').innerHTML = "Locating...";
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const accuracy = position.coords.accuracy;
+          
+          // Remove previous marker/circle if exists
+          if (marker) map.removeLayer(marker);
+          if (circle) map.removeLayer(circle);
+          
+          // Add new marker and accuracy circle
+          marker = L.marker([lat, lng]).addTo(map)
+            .bindPopup(`<b>Your Location</b><br>Lat: ${lat.toFixed(6)}<br>Lng: ${lng.toFixed(6)}`).openPopup();
+          
+          circle = L.circle([lat, lng], { radius: accuracy }).addTo(map);
+          
+          // Center map on location
+          map.setView([lat, lng], 15);
+          
+          // Display info
+          document.getElementById('info').innerHTML = `
+            <strong>Coordinates:</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>
+            <strong>Accuracy:</strong> ±${Math.round(accuracy)} meters<br>
+            <strong>Timestamp:</strong> ${new Date(position.timestamp).toLocaleString()}<br>
+            <button id="getAddress">Get Address Info</button>
+          `;
+          
+          // Add address lookup button
+          document.getElementById('getAddress').addEventListener('click', () => getAddress(lat, lng));
+        },
+        (error) => {
+          let message;
+          switch(error.code) {
+            case error.PERMISSION_DENIED: message = "You denied the location request."; break;
+            case error.POSITION_UNAVAILABLE: message = "Location unavailable."; break;
+            case error.TIMEOUT: message = "Location request timed out."; break;
+            default: message = "Unknown error occurred.";
+          }
+          document.getElementById('info').innerHTML = message;
+        },
+        { enableHighAccuracy: true }
+      );
+    });
+
+    // Get address using Nominatim (free OSM geocoding)
+    function getAddress(lat, lng) {
+      document.getElementById('info').innerHTML += "<br>Fetching address...";
+      
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+        .then(response => response.json())
+        .then(data => {
+          let address = "Address not found";
+          if (data.address) {
+            address = `
+              ${data.address.road || ''} ${data.address.house_number || ''}<br>
+              ${data.address.city || data.address.town || data.address.village || ''}<br>
+              ${data.address.state || ''} ${data.address.postcode || ''}<br>
+              ${data.address.country || ''}
+            `;
+          }
+          document.getElementById('info').innerHTML = `
+            <strong>Coordinates:</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>
+            <strong>Address:</strong> ${address}<br>
+            <strong>Full Data:</strong> <pre>${JSON.stringify(data, null, 2)}</pre>
+          `;
+        })
+        .catch(error => {
+          document.getElementById('info').innerHTML += "<br>Failed to get address";
+        });
+    }
+  </script>
+</body>
+</html>
