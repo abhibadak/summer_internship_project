@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Send WhatsApp Message</title>
+</head>
+<body>
+  <h2>Send WhatsApp Message</h2>
+  <button onclick="sendWhatsApp()">Send Message</button>
+
+  <script>
+    function sendWhatsApp() {
+      const phone = '+919175510587'; // Replace with the recipient's number
+      const message = encodeURIComponent("Hello! This is a message from my JavaScript app.");
+      const url = `https://wa.me/${phone}?text=${message}`;
+      window.open(url, '_blank');
+    }
+  </script>
+</body>
+</html>
