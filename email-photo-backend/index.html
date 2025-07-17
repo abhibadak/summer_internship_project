@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Send Photo via Email</h1>
+  
+  <!-- Camera -->
+  <video id="camera" autoplay></video>
+  <button onclick="capture()">Take Photo</button>
+  
+  <!-- Preview -->
+  <img id="preview" style="display:none;">
+  
+  <!-- Email Form -->
+  <input type="email" id="email" placeholder="Recipient's email">
+  <textarea id="message" placeholder="Message"></textarea>
+  <button onclick="send()" id="sendBtn" disabled>Send</button>
+
+  <script>
+    let photoBlob;
+    const camera = document.getElementById('camera');
+    const preview = document.getElementById('preview');
+
+    // Access camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => camera.srcObject = stream);
+
+    // Capture photo
+    function capture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = camera.videoWidth;
+      canvas.height = camera.videoHeight;
+      canvas.getContext('2d').drawImage(camera, 0, 0);
+      
+      canvas.toBlob(blob => {
+        photoBlob = blob;
+        preview.src = URL.createObjectURL(blob);
+        document.getElementById('sendBtn').disabled = false;
+      }, 'image/jpeg');
+    }
+
+    // Send email
+    async function send() {
+      const formData = new FormData();
+      formData.append('photo', photoBlob, 'photo.jpg');
+      formData.append('email', document.getElementById('email').value);
+      formData.append('message', document.getElementById('message').value);
+
+      const response = await fetch('http://localhost:3000/send', {
+        method: 'POST',
+        body: formData
+      });
+      alert(await response.text());
+    }
+  </script>
+</body>
+</html>
