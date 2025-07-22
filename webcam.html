@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Use Laptop Webcam</title>
+  <style>
+    video, canvas {
+      border: 2px solid #333;
+      margin-top: 10px;
+      display: block;
+      max-width: 100%;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🎥 Laptop Webcam Access</h2>
+
+<video id="video" width="640" height="480" autoplay></video>
+<button onclick="capturePhoto()">📸 Capture Photo</button>
+<canvas id="canvas" width="640" height="480"></canvas>
+
+<script>
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Step 1: Start webcam on page load
+  async function startWebcam() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+    } catch (err) {
+      alert("Could not access the camera. Please allow permissions.");
+      console.error("Webcam error:", err);
+    }
+  }
+
+  // Step 2: Capture photo from webcam
+  function capturePhoto() {
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  }
+
+  window.onload = startWebcam;
+</script>
+
+</body>
+</html>
