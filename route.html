@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Route Planner with OpenStreetMap</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    #map { height: 500px; width: 100%; margin-top: 10px; border: 2px solid #ddd; border-radius: 5px; }
+    #controls { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 10px; }
+    button { padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #45a049; }
+    input { padding: 8px; width: 300px; margin-right: 10px; }
+    #info { margin-top: 10px; padding: 10px; background: #e9f7ef; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Route Planner</h1>
+  <div id="controls">
+    <button id="getLocation">Use My Current Location</button>
+    <input id="destination" type="text" placeholder="Enter destination (e.g., Delhi, India)" />
+    <button id="plotRoute">Show Route</button>
+    <div id="info">Ready to calculate route...</div>
+  </div>
+  <div id="map"></div>
+
+  <!-- Load Leaflet and Routing Machine -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+  <script>
+    // Initialize map centered on India
+    const map = L.map('map').setView([20.5937, 78.9629], 5);
+    
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    let routeControl;
+    let userMarker;
+    let userLatLng;
+
+    // Get user's current location
+    document.getElementById('getLocation').addEventListener('click', () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
+            
+            // Update map view
+            map.setView(userLatLng, 13);
+            
+            // Add/update marker
+            if (userMarker) map.removeLayer(userMarker);
+            userMarker = L.marker(userLatLng)
+              .addTo(map)
+              .bindPopup("You are here!")
+              .openPopup();
+            
+            document.getElementById('info').innerHTML = 
+              `📍 Your location: ${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
+          },
+          (error) => {
+            document.getElementById('info').innerHTML = 
+              `Error: ${error.message}`;
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        document.getElementById('info').innerHTML = 
+          "Geolocation is not supported by your browser";
+      }
+    });
+
+    // Plot route
+    document.getElementById('plotRoute').addEventListener('click', () => {
+      const destination = document.getElementById('destination').value.trim();
+      
+      if (!userLatLng) {
+        document.getElementById('info').innerHTML = 
+          "Please get your current location first";
+        return;
+      }
+      
+      if (!destination) {
+        document.getElementById('info').innerHTML = 
+          "Please enter a destination";
+        return;
+      }
+
+      document.getElementById('info').innerHTML = 
+        "Calculating route...";
+      
+      // Use Nominatim for geocoding (convert address to coordinates)
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destination)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.length === 0) {
+            throw new Error("Destination not found");
+          }
+          
+          const destLatLng = L.latLng(data[0].lat, data[0].lon);
+          
+          // Clear previous route if exists
+          if (routeControl) map.removeControl(routeControl);
+          
+          // Create new route
+          routeControl = L.Routing.control({
+            waypoints: [userLatLng, destLatLng],
+            routeWhileDragging: true,
+            showAlternatives: true,
+            collapsible: true,
+            addWaypoints: false,
+            fitSelectedRoutes: true,
+            lineOptions: { styles: [{ color: '#3388ff', opacity: 0.7, weight: 5 }] }
+          }).addTo(map);
+          
+          // Add destination marker
+          L.marker(destLatLng)
+            .addTo(map)
+            .bindPopup(`<b>Destination:</b><br>${data[0].display_name}`)
+            .openPopup();
+            
+          document.getElementById('info').innerHTML = 
+            `Route to: ${data[0].display_name}`;
+        })
+        .catch(error => {
+          document.getElementById('info').innerHTML = 
+            `Error: ${error.message}`;
+        });
+    });
+  </script>
+</body>
+</html>
