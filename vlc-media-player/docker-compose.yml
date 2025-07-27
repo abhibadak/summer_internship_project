@@ -1,0 +1,10 @@
+version: '3'
+services:
+  vlc-vnc:
+    build: .
+    ports:
+      - "6080:80"
+    volumes:
+      - ./media:/media
+    environment:
+      - VNC_PW=123456
