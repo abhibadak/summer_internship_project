@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, 
+                #000000 0%, 
+                #0a0a2a 25%, 
+                #1a1a4a 50%, 
+                #2a2a6a 75%, 
+                #3a3a8a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: gradientShift 15s ease infinite;
+            background-size: 300% 300%;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+                        0 0 0 2px #ffffff,
+                        0 0 0 4px #ff0000;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4),
+                        0 0 0 2px #ffffff,
+                        0 0 0 4px #ff0000;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #000000, #1a1a4a, #ff0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="email"],
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        input[type="email"]:focus,
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1a1a4a;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(26, 26, 74, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #000000, #1a1a4a, #ff0000);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .clear-btn {
+            background: linear-gradient(45deg, #333, #666, #ff3333);
+            margin-top: 10px;
+        }
+
+        .clear-btn:hover {
+            background: linear-gradient(45deg, #222, #555, #ff2222);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .info {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            color: #1a1a4a;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .required {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✉️ Email Sender</h1>
+        
+        <div class="info">
+            <strong>📧 How it works:</strong> Fill out the form below and click "Send Email" to open your default email client with the pre-filled information.
+        </div>
+
+        <form id="emailForm">
+            <div class="form-group">
+                <label for="to">To <span class="required">*</span></label>
+                <input type="email" id="to" name="to" required placeholder="recipient@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Subject <span class="required">*</span></label>
+                <input type="text" id="subject" name="subject" required placeholder="Enter email subject">
+            </div>
+
+            <div class="form-group">
+                <label for="body">Message <span class="required">*</span></label>
+                <textarea id="body" name="body" required placeholder="Type your message here..."></textarea>
+            </div>
+
+            <button type="submit" class="btn">📤 Send Email</button>
+            <button type="button" class="btn clear-btn" onclick="clearForm()">🗑️ Clear Form</button>
+        </form>
+    </div>
+
+    <script>
+        function sendEmail(to, subject, body) {
+            // Validate inputs
+            if (!to || !subject || !body) {
+                alert('Please fill in all required fields!');
+                return false;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(to)) {
+                alert('Please enter a valid email address!');
+                return false;
+            }
+
+            // Encode the parameters for URL
+            const encodedSubject = encodeURIComponent(subject);
+            const encodedBody = encodeURIComponent(body);
+            
+            // Create mailto link
+            const mailtoLink = `mailto:${to}?subject=${encodedSubject}&body=${encodedBody}`;
+            
+            try {
+                // Open the default email client
+                window.location.href = mailtoLink;
+                
+                // Show success message
+                setTimeout(() => {
+                    alert('Email client opened! If nothing happened, please check if you have an email client installed.');
+                }, 100);
+                
+                return true;
+            } catch (error) {
+                alert('Error opening email client. Please try again.');
+                return false;
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('emailForm').reset();
+        }
+
+        // Handle form submission
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const to = document.getElementById('to').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const body = document.getElementById('body').value.trim();
+            
+            sendEmail(to, subject, body);
+        });
+
+        // Auto-resize textarea
+        document.getElementById('body').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        // Example usage function (can be called from console)
+        function sendExampleEmail() {
+            sendEmail(
+                'example@domain.com',
+                'Test Email from HTML Page',
+                'Hello!\n\nThis is a test email sent from my HTML email sender page.\n\nBest regards,\nYour Name'
+            );
+        }
+    </script>
+</body>
+</html>

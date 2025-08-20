@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Get IP and Location</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; background: #f0f0f0; }
+    button { padding: 12px 24px; font-size: 16px; background: #8c64d1; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+    #output { margin-top: 20px; font-size: 18px; color: #333; }
+  </style>
+</head>
+<body>
+  <button onclick="getIPLocation()">Get My IP and Location</button>
+  <div id="output"></div>
+
+  <script>
+    async function getIPLocation() {
+      const output = document.getElementById('output');
+      output.textContent = 'Fetching your IP and location...';
+
+      try {
+        const response = await fetch('https://ipinfo.io/json?token=546f060f138de4');
+        if (!response.ok) throw new Error('Failed to fetch location info.');
+
+        const data = await response.json();
+        const { ip, city, region, country } = data;
+
+        output.textContent =
+          `Your current IP address is ${ip} and your location is ${city}, ${region}, ${country}.`;
+      } catch (error) {
+        output.textContent = 'Unable to fetch IP or location.';
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>

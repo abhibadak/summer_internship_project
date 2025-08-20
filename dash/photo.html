@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Camera Capture and Save</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #957bcf 0%, #6a4bbf 50%, #4a2ca0 100%);
+      padding: 20px;
+      min-height: 100vh;
+      margin: 0;
+      color: white;
+      animation: gradientShift 15s ease infinite;
+      background-size: 200% 200%;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    h2 {
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      margin-bottom: 30px;
+      font-size: 2.2em;
+    }
+    
+    .container {
+      background-color: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    video, canvas {
+      margin-top: 10px;
+      width: 300px;
+      height: 225px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    video:hover, canvas:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    
+    button {
+      margin: 10px;
+      padding: 12px 25px;
+      font-size: 16px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #4a2ca0;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    button:hover {
+      background-color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    #photo {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      max-width: 300px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+    
+    #photo:hover {
+      transform: scale(1.02);
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Camera Capture & Save</h2>
+    
+    <video id="video" autoplay class="pulse"></video><br>
+    <button onclick="capturePhoto()">Capture Photo</button><br>
+    
+    <canvas id="canvas" style="display:none;"></canvas><br>
+    <img id="photo" alt="Captured Photo" style="display:none; border:2px solid #000;"><br>
+    
+    <a id="downloadLink" style="display:none;" download="captured_photo.png">
+      <button>Save Photo</button>
+    </a>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const photo = document.getElementById('photo');
+    const downloadLink = document.getElementById('downloadLink');
+
+    // Start camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        alert("Camera access denied or not available.");
+        console.error(err);
+      });
+
+    // Capture photo
+    function capturePhoto() {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      // Convert canvas to image URL
+      const imageUrl = canvas.toDataURL('image/png');
+      
+      // Show the image
+      photo.src = imageUrl;
+      photo.style.display = 'block';
+      downloadLink.href = imageUrl;
+      downloadLink.style.display = 'inline-block';
+      
+      // Add temporary animation to photo
+      photo.classList.add('pulse');
+      setTimeout(() => photo.classList.remove('pulse'), 2000);
+    }
+  </script>
+</body>
+</html>

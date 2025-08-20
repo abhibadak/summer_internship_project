@@ -1,0 +1,16 @@
+streamlit
+requests
+python-dotenv
+twilio
+pywhatkit
+tweepy
+boto3
+google-generativeai
+paramiko
+instagrapi
+opencv-python-headless
+mediapipe
+streamlit-webrtc
+psutil
+docker
+Pillow

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Directions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 15px;
+            border: 2px solid #f0c14b;
+        }
+
+        .results h3 {
+            color: #d68910;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .route-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(214, 137, 16, 0.2);
+        }
+
+        .info-card .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #d68910;
+        }
+
+        .info-card .label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .directions-list {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .direction-step {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .direction-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #667eea;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #667eea;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .map-placeholder {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            height: 300px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            border: 2px dashed #667eea;
+        }
+
+        .map-placeholder p {
+            color: #667eea;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .route-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗺️ Get Directions</h1>
+            <p>Find the best route between two locations</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="input-group">
+                <label for="from">📍 From:</label>
+                <input type="text" id="from" placeholder="Enter starting location (e.g., Bhawani Mandi)" value="beawar">
+            </div>
+            
+            <div class="input-group">
+                <label for="to">🎯 To:</label>
+                <input type="text" id="to" placeholder="Enter destination (e.g., Kota)" value="jaipur">
+            </div>
+                <button class="btn btn-secondary" onclick="openInMaps()">🗺️ Open in Maps</button>
+            </div>
+            
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        function getDirections() {
+            const from = document.getElementById('from').value.trim();
+            const to = document.getElementById('to').value.trim();
+            const resultsDiv = document.getElementById('results');
+            
+            if (!from || !to) {
+                resultsDiv.innerHTML = '<div class="error">⚠️ Please enter both starting location and destination.</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = '<div class="loading">🔄 Finding best route...</div>';
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // Mock directions data (in a real app, this would come from a routing API)
+                const mockDirections = generateMockDirections(from, to);
+                displayDirections(mockDirections);
+            }, 1500);
+        }
+               
+        function displayDirections(directions) {
+            const resultsDiv = document.getElementById('results');
+            
+            const html = `
+                <div class="results">
+                    <h3>🛣️ Route Information</h3>
+                    <div class="route-info">
+                        <div class="info-card">
+                            <div class="value">${directions.distance}</div>
+                            <div class="label">Total Distance</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="value">${directions.duration}</div>
+                            <div class="label">Estimated Time</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="value">${directions.steps.length}</div>
+                            <div class="label">Steps</div>
+                        </div>
+                    </div>
+                    
+                    <div class="directions-list">
+                        <h4>📋 Step-by-step directions:</h4>
+                        ${directions.steps.map((step, index) => `
+                            <div class="direction-step">
+                                <strong>${index + 1}.</strong> ${step}
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="map-placeholder">
+                        <p>🗺️ Interactive map would appear here<br>
+                        <small>In a production app, this would show the actual route on a map</small></p>
+                    </div>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        function openInMaps() {
+            const from = document.getElementById('from').value.trim();
+            const to = document.getElementById('to').value.trim();
+            
+            if (!from || !to) {
+                alert('⚠️ Please enter both locations first.');
+                return;
+            }
+            
+            // Create Google Maps URL
+            const mapsUrl = `https://www.google.com/maps/dir/${encodeURIComponent(from)}/${encodeURIComponent(to)}`;
+            
+            // Open in new tab
+            window.open(mapsUrl, '_blank');
+        }
+        
+        // Allow Enter key to trigger search
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                getDirections();
+            }
+        });
+        
+        // Auto-focus first input
+        document.getElementById('from').focus();
+    </script>
+</body>
+</html>
