@@ -85,9 +85,9 @@ AWS_INSTANCE_TYPE = st.secrets.get("AWS_INSTANCE_TYPE", os.getenv("AWS_INSTANCE_
 # AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are found automatically by boto3 from the .env file
 
 # AWS S3-SPECIFIC
-S3_BUCKET_NAME = "abhibadak"
-S3_ACCESS_KEY_ID = "AKIASEQJUSPLT5JUNMMV"
-S3_SECRET_ACCESS_KEY = "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"
+S3_BUCKET_NAME = "*******"
+S3_ACCESS_KEY_ID = "**********"
+S3_SECRET_ACCESS_KEY = "***********"
 
 # OTHER SERVICES
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", os.getenv("GEMINI_API_KEY"))
