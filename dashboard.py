@@ -9,13 +9,7 @@ streamlit_dir.mkdir(exist_ok=True)
 secrets_file = streamlit_dir / "secrets.toml"
 if not secrets_file.exists():
     with open(secrets_file, "w") as f:
-        f.write('GOOGLE_API_KEY = "Enter your gemini api key
-        "')
-
-
-
-
-
+        f.write('GOOGLE_API_KEY = "*********"')
 
 import streamlit as st
 import pandas as pd
